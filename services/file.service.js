@@ -14,7 +14,6 @@ const path = require('path');
 // });
 //
 
-
 // fs.writeFile('./data.txt', 'newData ', (err) => {
 //     if (err) {
 //         console.log(err);
@@ -90,7 +89,6 @@ const path = require('path');
 //     }
 // });
 
-
 // fs.readdir('./', (err, files) => {
 //     if (err) {
 //         console.log(err);
@@ -111,3 +109,17 @@ const path = require('path');
 //         });
 //     }
 // });
+
+const readStream = fs.createReadStream('./Utils/helloWorld.txt');
+const writeStream = fs.createWriteStream('./Utils/helloWorld3.txt');
+
+// readStream.on('data', chunk => {
+//     console.log(chunk);
+//     console.log('--/--/--/--/--/--/--/--/--/--/--/--/--/--/--/--');
+//     writeStream.write(chunk);
+// });
+// readStream.on('end', () => {
+//     console.log('File done');
+// });
+
+readStream.pipe(writeStream);
