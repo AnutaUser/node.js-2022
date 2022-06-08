@@ -1,5 +1,5 @@
-// const fs = require('fs');
-// const path = require('path');
+const fs = require('fs');
+const path = require('path');
 
 // fs.appendFile('./data.txt', 'Welcome node! ', (err) => {
 //     if (err) {
