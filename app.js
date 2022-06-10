@@ -1,7 +1,18 @@
 const express = require('express');
 const users = require('./dataBase/users');
+const axios = require('axios');
 
 const app = express();
+
+app.get('/albums', async (req, res) => {
+    const response = await axios.get('https://jsonplaceholder.typicode.com/albums');
+    res.status(response.status).json(response.data);
+});
+
+app.get('/todos', async (req, res) => {
+    const response = await axios.get('https://jsonplaceholder.typicode.com/todos');
+    res.status(response.status).json(response.data);
+});
 
 app.get('/', (req, res) => {
     res.json('Hello my friend)');
