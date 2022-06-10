@@ -1,60 +1,24 @@
-// const fs = require('fs');
-// const {users} = require('./users/users');
-// require('./tasks/task1');
+const fs = require('fs/promises');
+const path = require('path');
 
+const reader = async (read) => {
+    try {
+        const files = await fs.readdir(read);
 
-// fs.mkdir('./boys', (err, data) => {
-//     if (err) {
-//         console.log(err);
-//     }
-// });
+        for (const file of files) {
+            const stat = await fs.stat(path.join(read, file));
 
-// fs.mkdir('./girls', (err, data) => {
-//     if (err) {
-//         console.log(err);
-//     }
-// });
+            if (stat.isFile()) {
+                await fs.rename(path.join(read, file), (path.join(__dirname, 'forFiles', file)));
+            }
+            if (stat.isDirectory()) {
+                await reader(path.join(read, file));
+            }
+        }
+    } catch (e) {
+        console.log(e);
+    }
 
-// fs.writeFile('./boys/oleg.json', 'Oleg', (err) => {
-//     console.log(err);
-// });
+};
 
-// fs.readdir('./boys', (err, files) => {
-//     if (err) {
-//         console.log(err);
-//         return;
-//     }
-//     console.log(files);
-//     for (const file of files) {
-//         fs.readFile(`./boys/${file}`, (err, data) => {
-//             if (err) {
-//                 console.log(err);
-//                 return;
-//             }
-//             console.log(data.toString());
-//
-//         });
-//     }
-// });
-
-// fs.rename('./boys/anna.json', './girls/anna.json', (err) => {
-//     console.log(err);
-// });
-//
-// fs.rename('./boys/yeva.json', './girls/yeva.json', (err) =>{
-//     console.log(err);
-// });
-//
-// fs.rename('./girls/kokos.json', './boys/kokos.json', (err) => {
-//     console.log(err);
-// });
-//
-// fs.rename('./girls/petro.json', './boys/petro.json', (err) => {
-//     console.log(err);
-// });
-//
-// fs.rename('./girls/vasyl.json', './boys/vasyl.json', (err) => {
-//     console.log(err);
-// });
-
-// console.log(users);
+reader(path.join(__dirname, 'users'));
