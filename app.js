@@ -5,94 +5,98 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/users', async (req, res) => {
-    const users = await fileService.reader();
-    res.json(users);
+app.get('/cars', async (req, res) => {
+    const cars = await fileService.reader();
+    res.json(cars);
 });
 
-app.post('/users', async (req, res) => {
-    const {name, age} = req.body;
+app.post('/cars', async (req, res) => {
 
-    if (!Number.isInteger(age) || age < 18) {
-        res.status(400).json('Enter valid age');
+    const {model, price, year} = req.body;
+
+    if (!model || model.length < 2) {
+        return res.status(400).json('Enter valid model!');
+    }
+    if (!price || !Number.isInteger(price) || price < 0 || price > 1000000) {
+        return res.status(400).json('Enter valid price!');
+    }
+    if (!year || !Number.isInteger(year) || year > 2022 || year < 1990) {
+        return res.status(400).json('Enter valid year!');
     }
 
-    if (!name || name.length < 3) {
-        res.status(400).json('Enter valid name');
-    }
+    const cars = await fileService.reader();
 
-    const users = await fileService.reader();
+    const newCar = {...req.body, id: cars.length ? cars[cars.length - 1].id + 1 : 1};
 
-    const newUser = {...req.body, id: users.length ? users[users.length - 1].id + 1 : 1};
+    await fileService.writer([...cars, newCar]);
 
-    await fileService.writer([...users, newUser]);
-
-    res.status(201).json(newUser);
+    res.status(201).json(newCar);
 });
 
-app.get('/users/:userId', async (req, res) => {
+app.get('/cars/:carId', async (req, res) => {
+    const {carId} = req.params;
 
-    const {userId} = req.params;
+    const cars = await fileService.reader();
 
-    const users = await fileService.reader();
+    const car = cars.find((car) => car.id === +carId);
 
-    const user = users.find((user) => user.id === +userId);
-
-    // const user = users[userId];
-
-    if (!user) {
-        res.status(400).json(`User with id ${userId} not exist!!!`);
+    if (!car) {
+        return res.status(204).json(`Car with id ${carId} not exist!`);
     }
 
-    res.json(user);
+    res.json(car);
 });
 
-app.put('/users/:userId', async (req, res) => {
-    const {name, age} = req.body;
-    const {userId} = req.params;
+app.put('/cars/:carId', async (req, res) => {
+    const {carId} = req.params;
 
-    if (age && !Number.isInteger(age) || age < 18) {
-        res.status(400).json('Enter valid age');
+    const {model, price, year} = req.body;
+
+    if (!model || model.length < 2) {
+        return res.status(400).json('Enter valid model!');
+    }
+    if (!price || !Number.isInteger(price) || price > 1000000 || price < 0) {
+        return res.status(400).json('Enter valid price!');
+    }
+    if (!year || !Number.isInteger(year) || year > 2022 || year < 1990) {
+        return res.status(400).json('Enter valid year!');
     }
 
-    if (name && name.length < 3) {
-        res.status(400).json('Enter valid name');
-    }
-    const users = await fileService.reader();
+    const cars = await fileService.reader();
 
-    const index = users.findIndex((user) => user.id === +userId);
+    const index = cars.findIndex((car) => car.id === +carId);
 
     if (index === -1) {
-        res.status(400).json(`User with id ${userId} was not found`);
+        return res.status(400).json(`Car with id ${carId} not exist!`);
     }
 
-    const updatedUser = {...users[index], ...req.body};
-    // const updatedUser = Object.assign(users[index], req.body);
+    // const updateCar = Object.assign(cars[index], req.body);
+    const updateCar = {...cars[index], ...req.body};
 
-    users.splice(index, 1);
+    cars.splice(index, 1);
 
-    await fileService.writer([...users, updatedUser]);
+    await fileService.writer([...cars, updateCar]);
 
-    res.status(201).json(updatedUser);
+    res.json(updateCar);
 });
 
-app.delete('/users/:userId', async (req, res) => {
-    const {userId} = req.params;
-    const users = await fileService.reader();
+app.delete('/cars/:carId', async (req, res) => {
+    const {carId} = req.params;
 
-    const index = users.findIndex((user) => user.id === +userId);
+    const cars = await fileService.reader();
+
+    const index = cars.findIndex((car) => car.id === +carId);
 
     if (index === -1) {
-        res.status(400).json(`User with id ${userId} was not found`);
+        return res.status(400).json(`Car with id ${carId} not exist!`);
     }
+    cars.splice(index, 1);
 
-    users.splice(index, 1);
-
-    await fileService.writer(users);
+    await fileService.writer(cars);
 
     res.sendStatus(204);
 });
 
 app.listen(5200, () => {
-    console.log('Started on port 5200');
+    console.log('Port 5200 is work');
 });

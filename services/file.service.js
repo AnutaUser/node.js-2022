@@ -1,7 +1,7 @@
 const fs = require('fs/promises');
 const path = require('path');
 
-const dataPath = path.join(process.cwd(), 'dataBase', 'users.json');
+const dataPath = path.join(process.cwd(), 'dataBase', 'cars.json');
 
 module.exports = {
 
@@ -16,12 +16,12 @@ module.exports = {
         }
     },
 
-    writer: async (users) => {
+    writer: async (cars) => {
         try {
-            await fs.writeFile(dataPath, JSON.stringify(users));
+            await fs.writeFile(dataPath, JSON.stringify(cars));
         } catch (e) {
             console.error(e);
         }
     }
-};
 
+};
