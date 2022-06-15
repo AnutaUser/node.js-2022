@@ -1,8 +1,8 @@
-const {fileService} = require('../services');
+const {carService} = require('../services');
 
 const getAllCars = async (req, res) => {
     try {
-        const cars = await fileService.reader();
+        const cars = await carService.reader();
         res.json(cars);
     } catch (e) {
         res.status(400).json(e.message || 'Unknown Error');
@@ -23,11 +23,11 @@ const createCar = async (req, res) => {
             return res.status(400).json('Enter valid year!');
         }
 
-        const cars = await fileService.reader();
+        const cars = await carService.reader();
 
         const newCar = {...req.body, id: cars.length ? cars[cars.length - 1].id + 1 : 1};
 
-        await fileService.writer([...cars, newCar]);
+        await carService.writer([...cars, newCar]);
 
         res.status(201).json(newCar);
 
@@ -41,12 +41,12 @@ const getCarById = async (req, res) => {
         const {carId} = req.params;
         console.log(req.query);
 
-        const cars = await fileService.reader();
+        const cars = await carService.reader();
 
         const car = cars.find((car) => car.id === +carId);
 
         if (!car) {
-            return res.status(204).json(`Car with id ${carId} not exist!`);
+            return res.status(404).json(`Car with id ${carId} not exist!`);
         }
 
         res.json(car);
@@ -73,7 +73,7 @@ const updateCar = async (req, res) => {
             return res.status(400).json('Enter valid year!');
         }
 
-        const cars = await fileService.reader();
+        const cars = await carService.reader();
 
         const index = cars.findIndex((car) => car.id === +carId);
 
@@ -86,7 +86,7 @@ const updateCar = async (req, res) => {
 
         cars.splice(index, 1);
 
-        await fileService.writer([...cars, updateCar]);
+        await carService.writer([...cars, updateCar]);
 
         res.json(updateCar);
 
@@ -99,7 +99,7 @@ const deleteCar = async (req, res) => {
     try {
         const {carId} = req.params;
 
-        const cars = await fileService.reader();
+        const cars = await carService.reader();
 
         const index = cars.findIndex((car) => car.id === +carId);
 
@@ -108,7 +108,7 @@ const deleteCar = async (req, res) => {
         }
         cars.splice(index, 1);
 
-        await fileService.writer(cars);
+        await carService.writer(cars);
 
         res.sendStatus(204);
 
