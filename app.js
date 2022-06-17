@@ -1,19 +1,29 @@
 const express = require('express');
-const {urlencoded} = require('express');
+const mongoose = require('mongoose');
 
-const {carRouter, userRouter} = require('./routes');
+const {userRouter} = require('./routes');
+const {configs} = require('./configs');
+
+mongoose.connect(configs.MONGO_URL);
 
 const app = express();
-
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
 
-app.use('/cars', carRouter);
 app.use('/users', userRouter);
-app.use('*', async (req, res)=>{
-    await res.status(404).json('Not Found');
-})
 
-app.listen(5200, () => {
-    console.log('Port 5200 is work');
+app.use('*', async (req, res) => {
+    await res.status(404).json('Not Found');
+});
+
+app.use((err, req, res, next) => {
+    res
+        .status(err.status || 500)
+        .json({
+            error: err.message || 'Unknown Error!',
+            code: err.status || 500
+        });
+});
+
+app.listen(configs.PORT, () => {
+    console.log(`Started on port ${configs.PORT}`);
 });
