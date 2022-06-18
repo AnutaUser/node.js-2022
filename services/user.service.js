@@ -13,11 +13,12 @@ module.exports = {
         return User.create(user);
     },
 
-    updateOneUser: () => {
-
+    updateOneUser: (params, userData, options = {new: true}) => {
+        return User.findOneAndUpdate(params, userData, options);
     },
 
-    deleteUser: () => {
-
+    deleteUser: (params) => {
+        return User.deleteOne(params);
     }
 };
+

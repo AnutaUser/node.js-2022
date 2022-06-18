@@ -18,6 +18,23 @@ module.exports = {
             next(e);
         }
     },
+ isUserUnique: async (req, res, next) => {
+        try {
+            const {email} = req.body;
+
+            const user = await userService.findOneUser({email});
+
+            if (user) {
+                return next(new CustomError(`User with email ${email} exist!`, 409));
+            }
+
+            req.user = user;
+
+            next();
+        } catch (e) {
+            next(e);
+        }
+    },
 
     isUserValidForCreate: async (req, res, next) => {
         try {
@@ -34,6 +51,23 @@ module.exports = {
             }
             if (!password || password.length < 8) {
                 return next(new CustomError('Enter valid password!'));
+            }
+
+            next();
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    isUserValidForUpdate: async (req, res, next) => {
+        try {
+            const {name, age} = req.body;
+
+            if (name && name.length < 3) {
+                return next(new CustomError('Enter valid name!'));
+            }
+            if (age && !Number.isInteger(age) || age < 16) {
+                return next(new CustomError('Enter valid age!'));
             }
 
             next();
