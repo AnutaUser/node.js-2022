@@ -18,6 +18,7 @@ module.exports = {
             next(e);
         }
     },
+
  isUserUnique: async (req, res, next) => {
         try {
             const {email} = req.body;
@@ -70,11 +71,12 @@ module.exports = {
                 return next(new CustomError('Enter valid age!'));
             }
 
+            req.dataForUpdate = {name, age};
+
             next();
         } catch (e) {
             next(e);
         }
     }
-
-
 };
+

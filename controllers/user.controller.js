@@ -37,7 +37,8 @@ module.exports = {
         try {
             const {userId} = req.params;
 
-            const updateUser = await userService.updateOneUser({_id: userId}, req.body);
+            const updateUser = await userService.updateOneUser({_id: userId}, req.dataForUpdate);
+
             res.status(201).json(updateUser);
         } catch (e) {
             next(e);
@@ -56,4 +57,5 @@ module.exports = {
         }
     }
 };
+
 
