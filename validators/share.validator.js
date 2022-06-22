@@ -1,8 +1,10 @@
 const Joi = require('joi');
 
-const {EMAIL_REGEX, PASSWORD_REGEX} = require('../configs/configs');
+const {constants} = require('../configs');
 
-module.exports={
-    emailValidator: Joi.string().regex(EMAIL_REGEX).lowercase(),
-    passwordValidator: Joi.string().regex(PASSWORD_REGEX).min(8)
-}
+module.exports = {
+    nameValidator: Joi.string().alphanum().min(3).max(30).trim(),
+    ageValidator: Joi.number().integer().min(1).max(130),
+    emailValidator: Joi.string().regex(constants.EMAIL_REGEX).lowercase().trim(),
+    passwordValidator: Joi.string().regex(constants.PASSWORD_REGEX).min(8).trim(),
+};

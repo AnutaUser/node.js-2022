@@ -1,13 +1,15 @@
-const {userService} = require('../services');
-const {hashPassword} = require('../services/password.service');
+const {userService, passwordService} = require('../services');
+const {userPresenter} = require('../presenters');
 
 module.exports = {
 
     getUsers: async (req, res, next) => {
         try {
-            const users = await userService.getAll();
+            const users = await userService.getAll(req.query);
 
-            res.json(users);
+            const userForResponse = users.map(user => userPresenter.userPresenter(user));
+
+            res.json(userForResponse);
         } catch (e) {
             next(e);
         }
@@ -15,11 +17,13 @@ module.exports = {
 
     createUser: async (req, res, next) => {
         try {
-            const  hashedPassword = await hashPassword(req.body.password);
+            const  hash = await passwordService.hashPassword(req.body.password);
 
-            const newUser = await userService.createOne({...req.body, password: hashedPassword});
+            const newUser = await userService.createOne({...req.body, password: hash});
 
-            res.status(201).json(newUser);
+            const userForResponse = userPresenter.userPresenter(newUser);
+
+            res.status(201).json(userForResponse);
         } catch (e) {
             next(e);
         }
@@ -29,7 +33,9 @@ module.exports = {
         try {
             const {user} = req;
 
-            res.json(user);
+            const userForResponse = userPresenter.userPresenter(user);
+
+            res.json(userForResponse);
         } catch (e) {
             next(e);
         }
@@ -37,12 +43,13 @@ module.exports = {
 
     updateUser: async (req, res, next) => {
         try {
-            const {dataUser} = req;
             const {userId} = req.params;
 
-            const updatedUser = await userService.updateOne({_id: userId}, dataUser);
+            const updatedUser = await userService.updateOne({_id: userId}, req.body);
 
-            res.status(201).json(updatedUser);
+            const userForResponse = userPresenter.userPresenter(updatedUser);
+
+            res.status(201).json(userForResponse);
 
         } catch (e) {
             next(e);

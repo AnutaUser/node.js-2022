@@ -1,16 +1,16 @@
 const {CustomError} = require('../errors');
 const {userService} = require('../services');
-const {userValidator} = require('../validators');
+const {userValidator, queryUserValidator} = require('../validators');
 const {User} = require('../dataBase');
 
 module.exports = {
 
     isUserValidForCreate: async (req, res, next) => {
         try {
-            const {error, value} = userValidator.newUserValidator.validate(req.body);
+            const {error, value} = await userValidator.createUserValidator.validate(req.body);
 
             if (error) {
-                throw new CustomError(error.details[0].message);
+                return next(new CustomError(error.details[0].message));
             }
 
             req.body = value;
@@ -57,23 +57,34 @@ module.exports = {
 
     isUserValidForUpdate: async (req, res, next) => {
         try {
-            const {name, age} = req.body;
+            const {error, value} = await userValidator.updateUserValidator.validate(req.body);
 
-            if (name && name.length < 2) {
-                return next(new CustomError('Enter valid name'));
+            if (error) {
+                return next(new CustomError(error.details[0].message));
             }
 
-            if (age && !Number.isInteger(age) || age < 18) {
-                return next(new CustomError('Enter valid age'));
-            }
-
-            req.dataUser = {name, age};
+            req.body = value;
 
             next();
         } catch (e) {
             next(e);
         }
-    }
+    },
 
+    isUserQueryValid: async (req, res, next) => {
+        try {
+            const {error, value} = await queryUserValidator.queryUserValidator.validate(req.query);
+
+            if (error) {
+                return next(new CustomError(error.details[0].message));
+            }
+
+            req.query = value;
+
+            next();
+        } catch (e) {
+            next(e);
+        }
+    },
 
 };

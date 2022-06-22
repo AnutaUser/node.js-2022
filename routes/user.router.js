@@ -3,7 +3,7 @@ const router = require('express').Router();
 const {userController} = require('../controllers');
 const {userMiddleware, commonMiddleware} = require('../middlewares');
 
-router.get('/', userController.getUsers);
+router.get('/', userMiddleware.isUserQueryValid, userController.getUsers);
 router.post('/',
     userMiddleware.isUserValidForCreate,
     userMiddleware.isEmailRegistered,
