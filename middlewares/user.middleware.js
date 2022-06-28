@@ -1,5 +1,6 @@
 const {userValidator} = require('../validators');
 const {CustomError} = require('../errors');
+const {userService} = require('../services');
 
 module.exports = {
 
@@ -7,11 +8,31 @@ module.exports = {
         try {
             const {email} = req.body;
 
-            if (email) {
+            const userByEmail = await userService.findOne({email});
+
+            if (userByEmail) {
                 return next(new CustomError('This Email already exist!'));
             }
 
             next();
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    isUserEmailPresent: async (req, res, next) => {
+        try {
+            const {email} = req.body;
+
+            const userByEmail = await userService.findOne({email});
+
+            if (!userByEmail) {
+                return next(new CustomError('Email was not found!', 404));
+            }
+
+            req.user = userByEmail;
+
+                next();
         } catch (e) {
             next(e);
         }

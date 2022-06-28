@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const {userController} = require('../controllers');
-const {commonMiddleware, userMiddleware} = require('../middlewares');
+const {commonMiddleware, userMiddleware, authMiddleware} = require('../middlewares');
 
 router.get('/',
     userController.findAll);
@@ -22,6 +22,7 @@ router.put('/:userId',
 router.delete('/:userId',
     commonMiddleware.isIdValid,
     userMiddleware.isUserPresent,
+    authMiddleware.checkAccessToken,
     userController.deleteOne);
 
 module.exports = router;
