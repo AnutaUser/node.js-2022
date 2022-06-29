@@ -1,4 +1,4 @@
-const {userValidator} = require('../validators');
+const {userValidator, queryValidator} = require('../validators');
 const {CustomError} = require('../errors');
 const {userService} = require('../services');
 
@@ -15,24 +15,6 @@ module.exports = {
             }
 
             next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    isUserEmailPresent: async (req, res, next) => {
-        try {
-            const {email} = req.body;
-
-            const userByEmail = await userService.findOne({email});
-
-            if (!userByEmail) {
-                return next(new CustomError('Email was not found!', 404));
-            }
-
-            req.user = userByEmail;
-
-                next();
         } catch (e) {
             next(e);
         }
@@ -81,6 +63,22 @@ module.exports = {
         } catch (e) {
             next(e);
         }
-    }
+    },
+
+    isUserQueryValid: async (req, res, next) => {
+        try {
+            const {error, value} = await queryValidator.userQueryValid.validate(req.query);
+
+            if (error) {
+                return next(new CustomError(error.details[0].message));
+            }
+
+            req.query = value;
+
+            next();
+        } catch (e) {
+            next(e);
+        }
+    },
 
 };

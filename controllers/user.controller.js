@@ -5,7 +5,7 @@ module.exports = {
 
     findAll: async (req, res, next) => {
         try {
-            const users = await userService.findAll();
+            const users = await userService.findAll(req.query);
 
             const usersForResponse = users.map(user => userPresenter.userPresenter(user));
 
@@ -29,6 +29,13 @@ module.exports = {
 
     findOne: async (req, res, next) => {
         try {
+            const {userId} = req.params;
+
+            const user = await userService.findOne({_id: userId});
+
+            const userForResponse = userPresenter.userPresenter(user);
+
+            res.json(userForResponse);
 
         } catch (e) {
             next(e);

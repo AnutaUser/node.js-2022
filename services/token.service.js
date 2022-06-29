@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const {CustomError} = require('../errors');
 const {constants} = require('../configs');
+const {tokenTypeEnum} = require('../enums');
 
 module.exports = {
 
@@ -12,12 +13,19 @@ module.exports = {
         return {access_token, refresh_token};
     },
 
-    checkAccessToken: (token = '') => {
+    checkToken: (token = '', tokenType = tokenTypeEnum.ACCESS) => {
         try {
-            return jwt.verify(token, constants.ACCESS_TOKEN_SECRET);
+            let secret;
+
+            if (tokenType === tokenTypeEnum.ACCESS) secret = constants.ACCESS_TOKEN_SECRET;
+            if (tokenType === tokenTypeEnum.REFRESH) secret = constants.REFRESH_TOKEN_SECRET;
+
+            return jwt.verify(token, secret);
+
         } catch (e) {
             return new CustomError('Token not valid', 401);
         }
     },
+
 
 };

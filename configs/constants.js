@@ -4,4 +4,5 @@ module.exports = {
 
     ACCESS_TOKEN_SECRET: 'secret_access',
     REFRESH_TOKEN_SECRET: 'secret_refresh',
+    AUTHORIZATION: 'Authorization',
 };
