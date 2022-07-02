@@ -1,9 +1,9 @@
-const {CustomError} = require('../errors');
-const {tokenService, userService} = require('../services');
-const {OAuth} = require('../dataBase');
 const {authValidator} = require('../validators');
-const {tokenTypeEnum} = require('../enums');
+const {CustomError} = require('../errors');
 const {constants} = require('../configs');
+const {OAuth} = require('../dataBase');
+const {tokenService, userService} = require('../services');
+const {tokenTypeEnum} = require('../enums');
 
 module.exports = {
 
@@ -41,8 +41,6 @@ module.exports = {
             }
 
             tokenService.checkToken(refresh_token, tokenTypeEnum.REFRESH);
-
-            console.log(refresh_token);
 
             const tokenInfo = await OAuth.findOne({refresh_token});
 
