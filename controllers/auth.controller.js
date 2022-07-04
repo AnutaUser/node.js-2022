@@ -1,5 +1,6 @@
-const {passwordService, tokenService} = require('../services');
+const {passwordService, tokenService, emailService} = require('../services');
 const {OAuth} = require('../dataBase');
+const {emailActionEnum} = require('../enums');
 
 module.exports = {
 
@@ -47,9 +48,12 @@ module.exports = {
 
     logout: async (req, res, next) => {
         try {
-            const {access_token} = req;
+            const {access_token, user} = req;
+            const {name, email} = user;
 
             await OAuth.deleteOne({access_token});
+
+            await emailService.sendMail(email, emailActionEnum.LOGOUT, {name, count: 1});
 
             res.sendStatus(204);
         } catch (e) {
@@ -59,14 +63,29 @@ module.exports = {
 
     logoutAllDevices: async (req, res, next) => {
         try {
-            const {_id} = req.user;
+            const {_id, email, name} = req.user;
 
-            await OAuth.deleteMany({userId: _id});
+            const {deletedCount} = await OAuth.deleteMany({userId: _id});
+
+            await emailService.sendMail(email, emailActionEnum.LOGOUT, {name, count: deletedCount});
 
             res.sendStatus(204);
         } catch (e) {
             next(e);
         }
     },
+
+    forgotPassword: async (req, res, next) => {
+        try {
+            const {email, name} = req.user;
+
+            await emailService.sendMail(email, emailActionEnum.FORGOT_PASSWORD, {name});
+
+            res.sendStatus(204);
+        } catch (e) {
+            next(e);
+        }
+    },
+
 
 };

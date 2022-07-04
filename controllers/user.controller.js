@@ -1,5 +1,6 @@
-const {userService, passwordService} = require('../services');
+const {userService, passwordService, emailService} = require('../services');
 const {userPresenter} = require('../presenters');
+const {emailActionEnum} = require('../enums');
 
 module.exports = {
 
@@ -17,11 +18,17 @@ module.exports = {
 
     createOne: async (req, res, next) => {
         try {
-            const hash = await passwordService.hash_password(req.body.password);
+            const {name, email, password} = req.body;
+
+            const hash = await passwordService.hash_password(password);
 
             const newUser = await userService.createOne({...req.body, password: hash});
 
-            res.json(newUser)
+            await emailService.sendMail(email, emailActionEnum.WELCOME, {name});
+
+            const userForResponse = userPresenter.userPresenter(newUser);
+
+            res.json(userForResponse)
         } catch (e) {
             next(e);
         }

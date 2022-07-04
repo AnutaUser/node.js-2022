@@ -2,8 +2,8 @@
   "name": "node.js-2022",
   "version": "1.0.0",
   "scripts": {
-    "start:dev": "set MODE=dev && nodemon app.js",
-    "start:prod": "set MODE=prod && node app.js"
+    "start:dev": "set MODE=dev&& nodemon app.js",
+    "start:prod": "set MODE=prod&& node app.js"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
@@ -14,6 +14,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.4.0",
     "nodemailer": "^6.7.6",
+    "nodemailer-express-handlebars": "^5.0.0",
     "nodemon": "^2.0.18",
     "pug": "^3.0.2"
   },

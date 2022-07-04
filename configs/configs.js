@@ -5,8 +5,8 @@ module.exports = {
     ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET || 'ats',
     REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || 'rts',
 
-    NO_REPLY_EMAIL: 'bezkorovainaanna048@gmail.com',
-    NO_REPLY_EMAIL_PASSWORD: '17151715'
-};
+    NO_REPLY_EMAIL: process.env.NO_REPLY_EMAIL || 'bezkorovainaanna048@gmail.com',
+    NO_REPLY_EMAIL_PASSWORD: process.env.NO_REPLY_EMAIL_PASSWORD || '17151715',
 
-console.log(process.env.MONGO_URL, process.env.ACCESS_TOKEN_SECRET)
+    FRONTEND_URL: process.env.FRONTEND_URL || 'https://google.com',
+};
