@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const {CustomError} = require('../errors');
 const {constants} = require('../configs');
 const {tokenTypeEnum} = require('../enums');
+const {emailActionEnum} = require('../configs');
 
 module.exports = {
 
@@ -27,5 +28,19 @@ module.exports = {
         }
     },
 
+    generateActionToken: (actionType, payload = {}) => {
+        let secretWord = '';
+        let expiresIn = '7d';
+
+        switch (actionType) {
+            case emailActionEnum.FORGOT_PASSWORD:
+                secretWord = constants.FORGOT_PASS_ACTION_SECRET;
+                break;
+            default:
+                return new CustomError('Wrong action type', 500);
+        }
+        return jwt.sign(payload, secretWord, {expiresIn});
+
+    },
 
 };

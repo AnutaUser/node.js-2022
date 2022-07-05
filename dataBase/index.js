@@ -1,4 +1,5 @@
 module.exports = {
-    User: require('./user'),
+    ActionToken: require('./ActionToken'),
     OAuth: require('./oAuth'),
+    User: require('./user'),
 };
