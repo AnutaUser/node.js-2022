@@ -1,4 +1,4 @@
-const {userService, passwordService} = require('../services');
+const {userService, passwordService, s3Service} = require('../services');
 const {userPresenter} = require('../presenters');
 
 module.exports = {
@@ -17,11 +17,19 @@ module.exports = {
 
     createOne: async (req, res, next) => {
         try {
+            const avatar = '';
+
             const hash = await passwordService.hash_password(req.body.password);
 
             const newUser = await userService.createOne({...req.body, password: hash});
 
-            res.json(newUser)
+            const {Location} = await s3Service.uploadFile(req.files.userAvatar, newUser, newUser._id);
+
+            const userWithPhoto = await userService.updateOne(newUser._id, {avatar: Location}, {new: true});
+
+            const newUserForResponse = userPresenter.userPresenter(userWithPhoto);
+
+            res.status(201).json(newUserForResponse);
         } catch (e) {
             next(e);
         }
@@ -66,6 +74,6 @@ module.exports = {
         } catch (e) {
             next(e);
         }
-    },
+    }
 
 };

@@ -6,8 +6,10 @@ module.exports = {
             name: user.name,
             age: user.age,
             email: user.email,
+            avatar: user.avatar,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
+
         };
     }
 };

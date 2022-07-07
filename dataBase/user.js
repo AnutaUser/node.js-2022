@@ -27,6 +27,8 @@ const userSchema = new Schema({
         trim: true,
     },
 
+    avatar: String,
+
 }, {timestamps: true});
 
 module.exports = model('user', userSchema);
