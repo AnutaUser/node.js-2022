@@ -1,14 +1,16 @@
 const router = require('express').Router();
 
 const {userController} = require('../controllers');
-const {commonMiddleware, userMiddleware, authMiddleware} = require('../middlewares');
+const {commonMiddleware, userMiddleware, authMiddleware, fileMiddleware} = require('../middlewares');
+const {userValidator, queryValidator} = require('../validators');
 
 router.get('/',
-    userMiddleware.isUserQueryValid,
+    commonMiddleware.isDateValid(queryValidator.userQueryValid, 'query'),
     userController.findAll);
 router.post('/',
     userMiddleware.isUserUnique,
-    userMiddleware.isUserValidForCreate,
+    fileMiddleware.checkAvatar,
+    commonMiddleware.isDateValid(userValidator.userValidForCreate),
     userController.createOne);
 
 router.get('/:userId',
@@ -19,11 +21,11 @@ router.put('/:userId',
     commonMiddleware.isIdValid,
     authMiddleware.checkAccessToken,
     userMiddleware.isUserPresent,
-    userMiddleware.isUserValidForUpdate,
+    commonMiddleware.isDateValid(userValidator.userValidForUpdate),
     userController.updateOne);
 router.delete('/:userId',
     commonMiddleware.isIdValid,
-    authMiddleware.checkAccessToken,
+    // authMiddleware.checkAccessToken,
     userMiddleware.isUserPresent,
     userController.deleteOne);
 

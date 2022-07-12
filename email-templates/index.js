@@ -1,4 +1,4 @@
-const {emailActionEnum} = require('../configs');
+const {emailActionEnum} = require('../enums');
 
 module.exports = {
     [emailActionEnum.WELCOME]: {
@@ -11,9 +11,14 @@ module.exports = {
         template: 'forgot-password'
     },
 
-    [emailActionEnum.ORDER_PASSWORD]: {
-        subject: 'Order password?',
-        template: '<div style="background: plum">Order password?</div>'
+    [emailActionEnum.USER_BANNED]: {
+        subject: 'Account was blocked!',
+        template: 'account-blocked'
+    },
+
+    [emailActionEnum.LOGOUT]: {
+        subject: 'User was logout',
+        template: 'logout'
     },
 
 };

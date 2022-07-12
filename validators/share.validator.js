@@ -7,4 +7,5 @@ module.exports = {
     ageValidator: Joi.number().integer().min(16).max(130),
     emailValidator: Joi.string().regex(constants.EMAIL_REGEX).trim().lowercase(),
     passwordValidator: Joi.string().regex(constants.PASSWORD_REGEX).trim().min(8),
+    phoneValidator: Joi.string().regex(constants.PHONE_REGEX).trim(),
 };

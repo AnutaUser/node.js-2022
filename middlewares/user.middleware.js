@@ -1,4 +1,3 @@
-const {userValidator, queryValidator} = require('../validators');
 const {CustomError} = require('../errors');
 const {userService} = require('../services');
 
@@ -33,52 +32,4 @@ module.exports = {
             next(e);
         }
     },
-
-    isUserValidForCreate: async (req, res, next) => {
-        try {
-            const {error, value} = await userValidator.userValidForCreate.validate(req.body);
-
-            if (error) {
-                return next(new CustomError(error.details[0].message));
-            }
-            req.body = value;
-
-            next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    isUserValidForUpdate: async (req, res, next) => {
-        try {
-            const {error, value} = await userValidator.userValidForUpdate.validate(req.body);
-
-            if (error) {
-                return next(new CustomError(error.details[0].message));
-            }
-
-            req.body = value;
-
-            next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    isUserQueryValid: async (req, res, next) => {
-        try {
-            const {error, value} = await queryValidator.userQueryValid.validate(req.query);
-
-            if (error) {
-                return next(new CustomError(error.details[0].message));
-            }
-
-            req.query = value;
-
-            next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
 };

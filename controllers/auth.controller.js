@@ -1,8 +1,7 @@
 const {passwordService, tokenService, emailService} = require('../services');
 const {OAuth, ActionToken} = require('../dataBase');
-const {WELCOME} = require('../configs/email-action.enum');
-const {generateActionToken} = require('../services/token.service');
-const {constants, emailActionEnum} = require('../configs');
+const {emailActionEnum} = require('../enums');
+const {userPresenter} = require('../presenters');
 
 module.exports = {
 
@@ -11,12 +10,14 @@ module.exports = {
             const {password: hash_password, _id, name} = req.user;
             const {password, email} = req.body;
 
-            await emailService.sendMail('balabuch@i.ua', WELCOME, {userName: name});
+            await emailService.sendMail(email, emailActionEnum.WELCOME, {name});
             // await emailService.sendMail(email, WELCOME);
 
             await passwordService.compare_password(hash_password, password);
 
             const tokens = tokenService.generateAuthTokens();
+
+            const  userForResponse = userPresenter.userPresenter(req.user);
 
             await OAuth.create({
                 userId: _id,
@@ -24,7 +25,7 @@ module.exports = {
             });
 
             res.json({
-                user: req.user,
+                user: userForResponse,
                 ...tokens
             });
 
@@ -79,7 +80,7 @@ module.exports = {
             const {_id, name, email} = req.user;
             console.log(req.user);
 
-            const  token = generateActionToken(emailActionEnum.FORGOT_PASSWORD, {name, _id});
+            const  token = tokenService.generateActionToken(emailActionEnum.FORGOT_PASSWORD, {name, _id});
 
             await ActionToken.create({
                 userId: _id,

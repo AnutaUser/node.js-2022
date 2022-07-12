@@ -1,5 +1,8 @@
-const {userService, passwordService, s3Service} = require('../services');
+const {userService, passwordService, s3Service, emailService, smsService} = require('../services');
 const {userPresenter} = require('../presenters');
+const {configs} = require('../configs');
+const {emailActionEnum, smsActionEnum} = require('../enums');
+const {smsTemplateBuilder} = require('../common');
 
 module.exports = {
 
@@ -17,15 +20,22 @@ module.exports = {
 
     createOne: async (req, res, next) => {
         try {
-            const avatar = '';
+            const {name, email, phone, password} = req.body;
 
-            const hash = await passwordService.hash_password(req.body.password);
+            const hash = await passwordService.hash_password(password);
 
             const newUser = await userService.createOne({...req.body, password: hash});
 
-            const {Location} = await s3Service.uploadFile(req.files.userAvatar, newUser, newUser._id);
+            const {Location} = await s3Service.uploadFile(req.files.avatar, newUser, newUser._id);
 
-            const userWithPhoto = await userService.updateOne(newUser._id, {avatar: Location}, {new: true});
+            const userWithPhoto = await userService.updateOne({_id: newUser._id}, {avatar: Location}, {new: true});
+
+            const sms = smsTemplateBuilder[smsActionEnum.WELCOME]({name});
+
+            await Promise.allSettled([
+                await smsService.sendSMS(phone, sms),
+                await emailService.sendMail(email, emailActionEnum.WELCOME, {name})
+            ]);
 
             const newUserForResponse = userPresenter.userPresenter(userWithPhoto);
 
@@ -54,9 +64,21 @@ module.exports = {
         try {
             const {userId} = req.params;
 
+            if (req.files?.avatar) {
+                if (req.user.avatar) {
+                    const {Location} = await s3Service.uploadFile(req.files.avatar, 'user', userId);
+                    req.body.avatar = Location;
+                } else {
+                    const {Location} = await s3Service.updateFile(req.files.avatar, req.user.avatar);
+                    req.body.avatar = Location;
+                }
+            }
+
             const updateUser = await userService.updateOne({_id: userId}, req.body);
 
-            res.json(updateUser);
+            const updateUserForResponse = userPresenter.userPresenter(updateUser);
+
+            res.json(updateUserForResponse);
 
         } catch (e) {
             next(e);
@@ -68,6 +90,10 @@ module.exports = {
             const {userId} = req.params;
 
             await userService.deleteOne({_id: userId});
+
+            if (req.user?.avatar) {
+                await s3Service.deleteFile(req.user.avatar);
+            }
 
             res.sendStatus(204);
 

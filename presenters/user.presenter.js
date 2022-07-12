@@ -7,6 +7,7 @@ module.exports = {
             age: user.age,
             email: user.email,
             avatar: user.avatar,
+            phone: user.phone,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
 
