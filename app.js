@@ -20,8 +20,6 @@ if (configs.NODE_ENV !== 'prod') {
     app.use(morgan('dev'));
 }
 
-// app.use(morgan('dev'));
-
 app.use(cors(_configureCors()));
 app.use(expressFileUpload());
 
@@ -29,7 +27,7 @@ app.use('/users', userRouter);
 app.use('/auth', authRouter);
 
 app.use('*', (err, req, res, next) => {
-    // console.log(err);
+
     res
         .status(err.status || 500)
         .json({
