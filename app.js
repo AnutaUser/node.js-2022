@@ -41,16 +41,16 @@ app.listen(configs.PORT, () => {
     cronRun();
 });
 
-function _configureCors() {
-
-    const whitelist = configs.CORS_WHITE_LIST.split(';');
-
-    return {
-        origin: (origin, callback) => {
-            if (whitelist.includes(origin)) {
-                return callback(null, true);
-            }
-                callback(new CustomError('Not allowed by CORS!'));
-        }
-    };
-}
+// function _configureCors() {
+//
+//     const whitelist = configs.CORS_WHITE_LIST.split(';');
+//
+//     return {
+//         origin: (origin, callback) => {
+//             if (whitelist.includes(origin)) {
+//                 return callback(null, true);
+//             }
+//                 callback(new CustomError('Not allowed by CORS!'));
+//         }
+//     };
+// }
