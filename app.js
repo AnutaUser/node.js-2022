@@ -23,6 +23,7 @@ if (configs.NODE_ENV !== 'prod') {
 // app.use(cors(_configureCors()));
 app.use(expressFileUpload());
 
+app.use('/ping', (req, res) => res.json('PING'));
 app.use('/users', userRouter);
 app.use('/auth', authRouter);
 
