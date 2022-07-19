@@ -1,6 +1,5 @@
 const {userService, passwordService, s3Service, emailService, smsService} = require('../services');
 const {userPresenter} = require('../presenters');
-const {configs} = require('../configs');
 const {emailActionEnum, smsActionEnum} = require('../enums');
 const {smsTemplateBuilder} = require('../common');
 
@@ -8,11 +7,16 @@ module.exports = {
 
     findAll: async (req, res, next) => {
         try {
-            const users = await userService.findAll(req.query);
 
-            const usersForResponse = users.map(user => userPresenter.userPresenter(user));
+            const {data, count} = await userService.findAllWithPagination(req.query);
 
-            res.json(usersForResponse);
+            const usersForResponse = data.map(user => userPresenter.userPresenter(user));
+
+            res.json({
+                ...req.query,
+                usersForResponse,
+                count
+            });
         } catch (e) {
             next(e);
         }

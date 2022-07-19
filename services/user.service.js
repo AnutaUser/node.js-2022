@@ -2,8 +2,48 @@ const {User} = require('../dataBase');
 
 module.exports = {
 
-    findAll: async (params = {}) => {
-        return User.find(params);
+    findAllWithPagination: async (query = {}) => {
+
+        const {page = 1, perPage = 20, ...otherFilters} = query;
+
+        const searchObject = {};
+
+        if (otherFilters.search) {
+            Object.assign(searchObject, {
+                $or: [
+                    {name: {$regex: otherFilters.search, $options: 'i'}},
+                    {email: {$regex: otherFilters.search, $options: 'i'}}
+                ]
+            });
+        }
+
+        if (otherFilters.ageGte) {
+            Object.assign(searchObject, {
+                age: {$gte: +otherFilters.ageGte}
+            });
+        }
+
+        if (otherFilters.ageLte) {
+            Object.assign(searchObject, {
+                age: {
+                    ...searchObject.age || {},
+                    $lte: +otherFilters.ageLte
+                }
+            });
+        }
+
+        console.log(JSON.stringify(searchObject, null, 2));
+
+        const skip = (page - 1) * perPage;
+
+        const users = await User.find(searchObject).skip(skip).limit(perPage);
+        const count = await User.countDocuments(searchObject);
+
+        return {
+            ...query,
+            data: users,
+            count
+        };
     },
 
     createOne: async (user) => {
@@ -23,3 +63,36 @@ module.exports = {
     }
 
 };
+
+// const _getUserFilterQuery = (otherFilters) => {
+//     const searchObject = {};
+//
+//     if (otherFilters.search) {
+//         Object.assign(searchObject, {
+//             $or: [
+//                 {name: {$regex: otherFilters.search, $options: 'i'}},
+//                 {email: {$regex: otherFilters.search, $options: 'i'}}
+//             ]
+//         });
+//     }
+//
+//     if (otherFilters.ageGte) {
+//         Object.assign(searchObject, {
+//             age: {$gte: +otherFilters.ageGte}
+//         });
+//     }
+//
+//     if (otherFilters.ageLte) {
+//         Object.assign(searchObject, {
+//             age: {
+//                 ...searchObject.age || {},
+//                 $lte: +otherFilters.ageLte
+//             }
+//         });
+//     }
+//
+//     console.log(JSON.stringify(searchObject, null, 2));
+//
+//     return otherFilters;
+// }
+
