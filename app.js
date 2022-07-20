@@ -3,12 +3,14 @@ const expressFileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
 const path = require('path');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
 require('dotenv').config({path: path.join(process.cwd(), 'environments', `${process.env.MODE}.env`)});
 
 const {configs} = require('./configs');
 const cronRun = require('./cron');
 const {userRouter, authRouter} = require('./routes');
 const {CustomError} = require('./errors');
+const swaggerJson = require('./swagger.json');
 
 const app = express();
 app.use(express.json());
@@ -26,6 +28,7 @@ app.use(expressFileUpload());
 app.use('/ping', (req, res) => res.json('PING'));
 app.use('/users', userRouter);
 app.use('/auth', authRouter);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerJson));
 
 app.use('*', (err, req, res, next) => {
 
@@ -42,16 +45,16 @@ app.listen(configs.PORT, () => {
     cronRun();
 });
 
-// function _configureCors() {
-//
-//     const whitelist = configs.CORS_WHITE_LIST.split(';');
-//
-//     return {
-//         origin: (origin, callback) => {
-//             if (whitelist.includes(origin)) {
-//                 return callback(null, true);
-//             }
-//                 callback(new CustomError('Not allowed by CORS!'));
-//         }
-//     };
-// }
+function _configureCors() {
+
+    const whitelist = configs.CORS_WHITE_LIST.split(';');
+
+    return {
+        origin: (origin, callback) => {
+            if (whitelist.includes(origin)) {
+                return callback(null, true);
+            }
+                callback(new CustomError('Not allowed by CORS!'));
+        }
+    };
+}

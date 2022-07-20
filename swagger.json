@@ -1,0 +1,206 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "node.js-2022"
+  },
+  "paths": {
+    "/users": {
+      "get": {
+        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "operationId": "getAllUsers",
+        "parameters": [
+          {
+            "type": "number",
+            "in": "query",
+            "name": "page",
+            "default": 1,
+            "description": "Page number"
+          },
+          {
+            "type": "number",
+            "in": "query",
+            "name": "perPage",
+            "default": 20,
+            "required": true,
+            "description": "PerPage number"
+          },
+          {
+            "type": "number",
+            "in": "query",
+            "name": "ageGte",
+            "description": "ageGte"
+          },
+          {
+            "type": "number",
+            "in": "query",
+            "name": "ageLte",
+            "description": "ageLte"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "properties": {
+                "page": {
+                  "type": "number",
+                  "example": 1
+                },
+                "perPage": {
+                  "type": "number",
+                  "example": 20
+                },
+                "data": {
+                  "items": {
+                    "$ref": "#/definitions/User"
+                  }
+                },
+                "count": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Some errors",
+            "schema": {
+              "properties": {
+                "code": {
+                  "type": "number",
+                  "example": 400
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Something goes wrong!"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "operationId": "Create user",
+        "parameters": [
+          {
+            "type": "string",
+            "in": "formData",
+            "name": "name",
+            "required": true,
+            "description": "User name"
+          },
+          {
+            "type": "number",
+            "in": "formData",
+            "name": "age",
+            "required": true,
+            "description": "User age"
+          },
+          {
+            "type": "string",
+            "in": "formData",
+            "name": "email",
+            "required": true,
+            "description": "User email"
+          },
+          {
+            "type": "number",
+            "in": "formData",
+            "name": "phone",
+            "description": "User phone"
+          },
+          {
+            "type": "string",
+            "in": "formData",
+            "name": "password",
+            "required": true,
+            "description": "User password"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "properties": {
+                "items": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "operationId": "Get user by ID",
+        "parameters": [
+          {
+            "type": "string",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "properties": {
+                "items": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "definitions": {
+    "User": {
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "62d54886a1ed6513476de4cd",
+          "description": "MongoId"
+        },
+        "name": {
+          "type": "string",
+          "example": "Vasyl",
+          "description": "UserName"
+        },
+        "age": {
+          "type": "number",
+          "example": 18
+        },
+        "email": {
+          "type": "string",
+          "example": "email@j.com"
+        },
+        "avatar": {
+          "type": "string",
+          "example": "https://avatar.jpeg"
+        },
+        "phone": {
+          "type": "number",
+          "example": "+123456789"
+        }
+      }
+    }
+  }
+}
