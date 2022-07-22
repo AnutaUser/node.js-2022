@@ -37,8 +37,6 @@ io.on('connection', (socket) => {
         message: 'Hello  from Veronika!'
     });
 
-
-
     setTimeout(() => {
         io.emit('globalBroadcast', 'TEST SOCKET');
     }, 2000);
