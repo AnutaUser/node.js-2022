@@ -6,5 +6,5 @@ module.exports = {
     AUTHORIZATION: 'Authorization',
 
     IMAGE_MAX_SIZE: 3 * 1024 * 1024,
-    IMAGE_MIMETYPES: ['image/gif', 'image/jpeg', 'image/png']
+    IMAGE_MIMETYPES: ['image/gif', 'image/jpeg', 'image/png'],
 };
